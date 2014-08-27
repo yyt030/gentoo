@@ -1,0 +1,241 @@
+" Use pathogen to manage all plugins
+"call pathogen#infect()
+let mapleader=','
+" System wide configurations
+syntax on
+filetype on
+filetype plugin on
+filetype indent on
+set mouse-=a
+set nocompatible
+set background=dark
+set tabstop=4
+set textwidth=0
+set softtabstop=4
+set shiftwidth=4
+set backspace=indent,eol,start
+set nobackup
+set smartindent
+set autoindent
+set ruler
+" set showbreak=↪
+" set number
+set modeline
+" Highlight matching parens
+set showmatch
+" Search options
+set smartcase
+set incsearch
+set ignorecase
+set infercase
+set hlsearch
+" Show full tags when doing search completion
+set showfulltag
+" Speed up macros
+set lazyredraw
+" Wrap on these
+set whichwrap+=<,>,[,]
+" Use the cool tab complete menu
+set wildmenu
+" Handle file encoding
+set encoding=utf-8
+let &termencoding=&encoding
+" 设置文字编码自动识别
+set fileencodings=ucs-bom,utf-8,gbk,big5
+set ambiwidth=double
+set formatoptions+=mM
+"不在单词中间断行
+set lbr
+"打开断行模块对亚洲语言支持
+set fo+=mb
+" show command keyed in
+set showcmd
+" GUI options
+set guioptions-=r
+set guioptions-=R
+"set guioptions-=l
+set guioptions-=L
+" Detect filetype when save
+au BufWritePost * filet detect
+" For octopress markdown template
+au BufNewFile,BufRead *octopress*.markdown set ft=octopress
+au BufNewFile,BufRead *source/_posts*.markdown set ft=octopress
+" ########################################################################
+" Remember the last cursor position
+if has("autocmd")
+autocmd BufReadPost *
+\ if line("'\"") > 0 && line("'\"") <= line("$") |
+\ exe "normal g`\"" |
+\ endif
+endif
+" Enable omni completion for any language with syntax highlighting
+" (Only works for vim7+, :help ft-syntax-omni)
+if has("autocmd") && exists("+omnifunc")
+autocmd Filetype *
+\ if &omnifunc == "" |
+\ setlocal omnifunc=syntaxcomplete#Complete |
+\ endif
+endif
+" Set statusline
+set laststatus=2 "statusline=%02n:\ %<%f\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\ %-14.(%l,%c%V%)\ %P
+function! SyntaxItem()
+return synIDattr(synID(line("."),col("."),1),"name")
+endfunction
+if has('statusline')
+set statusline=%#Question# " set highlighting
+set statusline+=%-2.2n\ " buffer number
+set statusline+=%#WarningMsg# " set highlighting
+set statusline+=%f\ " file name
+set statusline+=%#Question# " set highlighting
+set statusline+=%h%m%r%w\ " flags
+set statusline+=%{strlen(&ft)?&ft:'none'}, " file type
+set statusline+=%{(&fenc==\"\"?&enc:&fenc)}, " encoding
+set statusline+=%{((exists(\"+bomb\")\ &&\ &bomb)?\"B,\":\"\")} " BOM
+set statusline+=%{&fileformat}, " file format
+set statusline+=%{&spelllang}, " language of spelling checker
+set statusline+=%{SyntaxItem()} " syntax highlight group under cursor
+set statusline+=%= " ident to the right
+set statusline+=0x%-8B\ " character code under cursor
+set statusline+=%-7.(%l,%c%V%)\ %<%P " cursor position/offset
+"set statusline+=%{TagInStatusLine()} " Show current python function name
+"set statusline+="%{fugitive#statusline()}"
+endif
+" ########################################################################
+" VIM 7.3 new features
+" ########################################################################
+if v:version >= 703
+" Enable persistent undo
+set undofile
+set undodir=/tmp
+" make sure that max lines are displayed
+set colorcolumn=80
+hi ColorColumn guibg=#c0c0c0
+"hi ColorColumn guibg=#c0FFFF
+endif
+" For macvim
+if has("gui_macvim")
+" Map shortcuts for tab operations
+nmap <D-1> 1gt
+nmap <D-2> 2gt
+nmap <D-3> 3gt
+nmap <D-4> 4gt
+nmap <D-5> 5gt
+nmap <D-6> 6gt
+nmap <D-7> 7gt
+nmap <D-8> 8gt
+nmap <D-9> 9gt
+set guitablabel=[%N]%m%r%h%w%f
+let macvim_hig_shift_movement = 1
+set macmeta
+" Set font for MacVIM
+set gfn=Monaco:h11
+" Use transparent background
+" if &background == "dark"
+" hi normal guibg=black
+" set transparency=15
+" endif
+endif
+" ########################################################################
+" For rope plugin
+"imap <buffer><Tab> <M-/>
+" For pep8 plugin
+let g:pep8_map='<leader>8'
+" For ctags
+nnoremap <leader>ct :!ctags -R --python-kinds=-i *.py<CR>
+" map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
+" map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+map <C-\> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+" ------------------------------------------------------------------------
+" For taglist
+if (!has("gui_running"))
+let Tlist_Inc_Winwidth = 0
+let Tlist_Auto_Open = 0
+" minibufexpl settings
+let g:miniBufExplMapWindowNavVim = 1
+let g:miniBufExplMapWindowNavArrows = 1
+let g:miniBufExplMapCTabSwitchBufs = 1
+let g:miniBufExplModSelTarget = 1
+" Set color scheme
+" colorscheme Tomorrow-Night
+" colorscheme settlemyer
+" Set highlight color (for fixing pyflakes)
+highlight SpellBad cterm=reverse ctermbg=1
+highlight SpellRare cterm=reverse ctermbg=1
+highlight SpellLocal cterm=reverse ctermbg=1
+highlight SpellCap cterm=reverse ctermbg=1
+else
+let Tlist_Inc_Winwidth = 1
+let Tlist_Auto_Open = 0
+" Disable minibufexpl if gui is running
+let loaded_minibufexplorer = 1
+" Set window size
+set lines=999
+set columns=100
+" Enable mouse support
+set mouse=a
+" Set color scheme
+colorscheme desert
+" Set highlight color (for fixing pyflakes)
+highlight SpellBad term=underline gui=undercurl guisp=Orange
+endif
+nnoremap tl :TlistToggle<cr>
+let Tlist_Use_Right_Window = 1
+let Tlist_WinWidth = 35
+let Tlist_Exit_OnlyWindow = 1
+let Tlist_File_Fold_Auto_Close = 0
+" Variables for taglist plugin - end
+" ------------------------------------------------------------------------
+" For NERD_tree
+nmap tk :NERDTreeToggle<cr>
+" For fuzzyfinder
+map <leader>r :FufFile<CR>
+map <D-r> :FufFile<CR>
+map <D-d> :FufDir<CR>
+"a leading space allows a recursive search
+let g:fuf_abbrevMap = {
+\ "^ " : [ "**/", ],
+\ }
+" ------------------------------------------------------------------------
+" Variables for bash-support plugin
+let g:BASH_AuthorName = 'Yantao Yue'
+let g:BASH_Email = 'yyt030@gmail.com'
+let g:BASH_Company = 'https://github.com/yyt030'
+" For snipMate
+let g:snips_author = 'Yantao Yue <yyt030@gmail.com>'
+" Key mappings to ease browsing long lines
+noremap <C-J> gj
+noremap <C-K> gk
+noremap j gj
+noremap k gk
+noremap <Down> gj
+noremap <Up> gk
+inoremap <Down> <C-O>gj
+inoremap <Up> <C-O>gk
+function! CapitalizeCenterAndMoveDown()
+s/\<./\u&/g "Built-in substitution capitalizes each word
+center "Built-in center command centers entire line
++1 "Built-in relative motion (+1 line down)
+endfunction
+nmap <silent> \C :call CapitalizeCenterAndMoveDown()<CR>
+" Mappings to access buffers (don't use ",p" because a
+" delay before pressing "p" would accidentally paste).
+" ,l : list buffers
+" ,b ,f ,g : go back/forward/last-used
+" ,1 ,2 ,3 : go to buffer 1/2/3 etc
+nnoremap ,l :ls<CR>
+nnoremap ,b :bp<CR>
+nnoremap ,f :bn<CR>
+nnoremap ,g :e#<CR>
+nnoremap ,1 :1b<CR>
+nnoremap ,2 :2b<CR>
+nnoremap ,3 :3b<CR>
+nnoremap ,4 :4b<CR>
+nnoremap ,5 :5b<CR>
+nnoremap ,6 :6b<CR>
+nnoremap ,7 :7b<CR>
+nnoremap ,8 :8b<CR>
+nnoremap ,9 :9b<CR>
+nnoremap ,0 :10b<CR>
+" It's useful to show the buffer number in the status line.
+"set laststatus=2 statusline=%02n:%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
+" vim: set et ts=4 sw=4 :
