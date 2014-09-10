@@ -1,241 +1,1053 @@
-" Use pathogen to manage all plugins
-"call pathogen#infect()
-let mapleader=','
-" System wide configurations
-syntax on
-filetype on
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"
+" Yue Yantao
+" Tip:
+" If you find anything that you can't understand than do this:
+" help keyword OR helpgrep keywords
+"
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => General
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => When started as "evim", evim will not do these settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if v:progname =~? "evim"
+        finish
+endif
+
+autocmd!
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Local Variable
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let head_flag=1
+let copen_flag=0
+let nowrap_flag=0
+let xxd_flag=0
+let virtual_flag=0
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Setting VIM and VIMRUNTIME
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("win32")
+        let $VIM        = $PROGRAMFILES."\\Vim"
+        let $VIMRUNTIME = $PROGRAMFILES."\\Vim\\vim71"
+        let $VIMRC      = $PROGRAMFILES."\\Vim\\_vimrc"
+        let $DESKTOP    = $USERPROFILE."\\桌面"
+elseif has("unix")
+        let $VIM        = "/opt/bin/vim"
+        let $VIMRUNTIME = "/opt/share/vim/vim74"
+        let $VIMRC      = "$HOME"."/.vimrc"
+        let $DESKTOP    = "$HOME/Desktop"
+else
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Setting encodings
+" => Vim 逐一探测即将打开的文件的字符编码方式
+" => Vim 内部使用的字符编码方式: encoding
+" => Vim 中当前编辑的文件的字符编码方式: fileencoding
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set fileencodings=ucs-bom,utf-8,cp936,gb18030,big5,euc-jp,euc-kr,latin1
+
+set encoding=cp936
+"language messages zh_CN.utf-8
+set printencoding=cp936
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => termencoding
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if v:lang =~ "^zh_CN"
+        set termencoding=cp936
+elseif v:lang =~ "^zh_TW"
+        set termencoding=big5
+elseif v:lang =~ "^ko"
+        set termencoding=euc-kr
+elseif v:lang =~ "^ja_JP"
+        set termencoding=euc-jp
+elseif v:lang =~ "^en_US"
+        set termencoding=en_US
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Reload menu
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("gui_running")
+        source $VIMRUNTIME/delmenu.vim
+        set langmenu=zh_CN.UTF-8
+        source $VIMRUNTIME/menu.vim
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Last cursor position
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd BufReadPost *
+                        \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+                        \ exe "normal g'\"" |
+                        \ endif |
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Choose binary mode
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set nobin
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Choose VI's compatible mode
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set nocompatible
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Set begin path
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("win32") && has("gui_running")
+        cd $DESKTOP
+elseif has("unix")
+elseif has("mac")
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Set path
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("win32")
+        set path=.,,
+elseif has("unix")
+        set path=.,/usr/local/include,/usr/include
+        set path+=~/batch/include,~/online/include
+elseif has("mac")
+        set path=.,/emx/local/include
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Set shell
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("win32")
+        set shell=cmd
+elseif has("unix")
+        set shell=ksh
+elseif has("mac")
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Set tags file
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("win32")
+        set tags+=$PROGRAMFILES\IDM\\\ Computer\\\ Solutions\UltraEdit-32\tags.lst
+elseif has("unix")
+        set tags+=$HOME/tags
+elseif has("mac")
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Special operation for OS
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("win32")
+        "source $VIMRUNTIME/mswin.vim
+        behave mswin
+elseif has("unix")
+        behave xterm
+elseif has("mac")
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Sets how many lines of history VIM has to remember
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set history=100
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Choose help language
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"set helplang=en
+set helplang=cn
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Enable filetype plugin
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 filetype plugin on
 filetype indent on
-set mouse-=a
-set nocompatible
-set background=dark
-set tabstop=4
-set textwidth=0
-set softtabstop=4
-set shiftwidth=4
-set backspace=indent,eol,start
-set nobackup
-set smartindent
-set autoindent
-set ruler
-" set showbreak=↪
-" set number
-set modeline
-" Highlight matching parens
-set showmatch
-" Search options
-set smartcase
-set incsearch
-set ignorecase
-set infercase
-set hlsearch
-" Show full tags when doing search completion
-set showfulltag
-" Speed up macros
-set lazyredraw
-" Wrap on these
-set whichwrap+=<,>,[,]
-" Use the cool tab complete menu
-set wildmenu
-" Handle file encoding
-set encoding=utf-8
-let &termencoding=&encoding
-" 设置文字编码自动识别
-set fileencodings=ucs-bom,utf-8,gbk,big5
-set ambiwidth=double
-set formatoptions+=mM
-"不在单词中间断行
-set lbr
-"打开断行模块对亚洲语言支持
-set fo+=mb
-" show command keyed in
-set showcmd
-" GUI options
-set guioptions-=r
-set guioptions-=R
-"set guioptions-=l
-set guioptions-=L
-" Detect filetype when save
-au BufWritePost * filet detect
-" For octopress markdown template
-au BufNewFile,BufRead *octopress*.markdown set ft=octopress
-au BufNewFile,BufRead *source/_posts*.markdown set ft=octopress
-" ########################################################################
-" Remember the last cursor position
-if has("autocmd")
-autocmd BufReadPost *
-\ if line("'\"") > 0 && line("'\"") <= line("$") |
-\ exe "normal g`\"" |
-\ endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Set to auto read when a file is changed from the outside
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set autoread
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Term colors
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("win32")
+        set t_Co=16
+elseif has("unix")
+        set t_Co=8
+elseif has("mac")
 endif
-" Enable omni completion for any language with syntax highlighting
-" (Only works for vim7+, :help ft-syntax-omni)
-if has("autocmd") && exists("+omnifunc")
-autocmd Filetype *
-\ if &omnifunc == "" |
-\ setlocal omnifunc=syntaxcomplete#Complete |
-\ endif
-endif
-" Set statusline
-set laststatus=2 "statusline=%02n:\ %<%f\ %h%m%r%=%k[%{(&fenc==\"\")?&enc:&fenc}%{(&bomb?\",BOM\":\"\")}]\ %-14.(%l,%c%V%)\ %P
-function! SyntaxItem()
-return synIDattr(synID(line("."),col("."),1),"name")
-endfunction
-if has('statusline')
-set statusline=%#Question# " set highlighting
-set statusline+=%-2.2n\ " buffer number
-set statusline+=%#WarningMsg# " set highlighting
-set statusline+=%f\ " file name
-set statusline+=%#Question# " set highlighting
-set statusline+=%h%m%r%w\ " flags
-set statusline+=%{strlen(&ft)?&ft:'none'}, " file type
-set statusline+=%{(&fenc==\"\"?&enc:&fenc)}, " encoding
-set statusline+=%{((exists(\"+bomb\")\ &&\ &bomb)?\"B,\":\"\")} " BOM
-set statusline+=%{&fileformat}, " file format
-set statusline+=%{&spelllang}, " language of spelling checker
-set statusline+=%{SyntaxItem()} " syntax highlight group under cursor
-set statusline+=%= " ident to the right
-set statusline+=0x%-8B\ " character code under cursor
-set statusline+=%-7.(%l,%c%V%)\ %<%P " cursor position/offset
-"set statusline+=%{TagInStatusLine()} " Show current python function name
-"set statusline+="%{fugitive#statusline()}"
-endif
-" ########################################################################
-" VIM 7.3 new features
-" ########################################################################
-if v:version >= 703
-" Enable persistent undo
-set undofile
-set undodir=/tmp
-" make sure that max lines are displayed
-set colorcolumn=80
-hi ColorColumn guibg=#c0c0c0
-"hi ColorColumn guibg=#c0FFFF
-endif
-" For macvim
-if has("gui_macvim")
-" Map shortcuts for tab operations
-nmap <D-1> 1gt
-nmap <D-2> 2gt
-nmap <D-3> 3gt
-nmap <D-4> 4gt
-nmap <D-5> 5gt
-nmap <D-6> 6gt
-nmap <D-7> 7gt
-nmap <D-8> 8gt
-nmap <D-9> 9gt
-set guitablabel=[%N]%m%r%h%w%f
-let macvim_hig_shift_movement = 1
-set macmeta
-" Set font for MacVIM
-set gfn=Monaco:h11
-" Use transparent background
-" if &background == "dark"
-" hi normal guibg=black
-" set transparency=15
-" endif
-endif
-" ########################################################################
-" For rope plugin
-"imap <buffer><Tab> <M-/>
-" For pep8 plugin
-let g:pep8_map='<leader>8'
-" For ctags
-nnoremap <leader>ct :!ctags -R --python-kinds=-i *.py<CR>
-" map <C-\> :tab split<CR>:exec("tag ".expand("<cword>"))<CR>
-" map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-map <C-\> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
-" ------------------------------------------------------------------------
-" For taglist
-if (!has("gui_running"))
-let Tlist_Inc_Winwidth = 0
-let Tlist_Auto_Open = 0
-" minibufexpl settings
-let g:miniBufExplMapWindowNavVim = 1
-let g:miniBufExplMapWindowNavArrows = 1
-let g:miniBufExplMapCTabSwitchBufs = 1
-let g:miniBufExplModSelTarget = 1
-" Set color scheme
-" colorscheme Tomorrow-Night
-" colorscheme settlemyer
-" Set highlight color (for fixing pyflakes)
-highlight SpellBad cterm=reverse ctermbg=1
-highlight SpellRare cterm=reverse ctermbg=1
-highlight SpellLocal cterm=reverse ctermbg=1
-highlight SpellCap cterm=reverse ctermbg=1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Have the mouse enabled in gui mode
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("gui_running")
+        set mousehide
+        set mouse=a
 else
-let Tlist_Inc_Winwidth = 1
-let Tlist_Auto_Open = 0
-" Disable minibufexpl if gui is running
-let loaded_minibufexplorer = 1
-" Set window size
-set lines=999
-set columns=100
-" Enable mouse support
-set mouse=a
-" Set color scheme
-colorscheme desert
-" Set highlight color (for fixing pyflakes)
-highlight SpellBad term=underline gui=undercurl guisp=Orange
+        set t_Sf=1%dm
+        set t_Sb=1%dm
 endif
-nnoremap tl :TlistToggle<cr>
-let Tlist_Use_Right_Window = 1
-let Tlist_WinWidth = 35
-let Tlist_Exit_OnlyWindow = 1
-let Tlist_File_Fold_Auto_Close = 0
-" Variables for taglist plugin - end
-" ------------------------------------------------------------------------
-" For NERD_tree
-nmap tk :NERDTreeToggle<cr>
-" For fuzzyfinder
-map <leader>r :FufFile<CR>
-map <D-r> :FufFile<CR>
-map <D-d> :FufDir<CR>
-"a leading space allows a recursive search
-let g:fuf_abbrevMap = {
-\ "^ " : [ "**/", ],
-\ }
-" ------------------------------------------------------------------------
-" Variables for bash-support plugin
-let g:BASH_AuthorName = 'Yantao Yue'
-let g:BASH_Email = 'yyt030@gmail.com'
-let g:BASH_Company = 'https://github.com/yyt030'
-" For snipMate
-let g:snips_author = 'Yantao Yue <yyt030@gmail.com>'
-" Key mappings to ease browsing long lines
-noremap <C-J> gj
-noremap <C-K> gk
-noremap j gj
-noremap k gk
-noremap <Down> gj
-noremap <Up> gk
-inoremap <Down> <C-O>gj
-inoremap <Up> <C-O>gk
-function! CapitalizeCenterAndMoveDown()
-s/\<./\u&/g "Built-in substitution capitalizes each word
-center "Built-in center command centers entire line
-+1 "Built-in relative motion (+1 line down)
-endfunction
-nmap <silent> \C :call CapitalizeCenterAndMoveDown()<CR>
-" Mappings to access buffers (don't use ",p" because a
-" delay before pressing "p" would accidentally paste).
-" ,l : list buffers
-" ,b ,f ,g : go back/forward/last-used
-" ,1 ,2 ,3 : go to buffer 1/2/3 etc
-nnoremap ,l :ls<CR>
-nnoremap ,b :bp<CR>
-nnoremap ,f :bn<CR>
-nnoremap ,g :e#<CR>
-nnoremap ,1 :1b<CR>
-nnoremap ,2 :2b<CR>
-nnoremap ,3 :3b<CR>
-nnoremap ,4 :4b<CR>
-nnoremap ,5 :5b<CR>
-nnoremap ,6 :6b<CR>
-nnoremap ,7 :7b<CR>
-nnoremap ,8 :8b<CR>
-nnoremap ,9 :9b<CR>
-nnoremap ,0 :10b<CR>
-" It's useful to show the buffer number in the status line.
-"set laststatus=2 statusline=%02n:%<%f\ %h%m%r%=%-14.(%l,%c%V%)\ %P
-" vim: set et ts=4 sw=4 :
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => When vimrc is saved, reload it
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"autocmd! bufwritepost _vimrc source $VIMRC
+"autocmd! bufwritepost .vimrc source $VIMRC
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Define function keys
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <F1>
+                        \ :if (!head_flag)<CR>
+                        \     set nu foldcolumn=2<CR>let head_flag=1<CR>
+                        \ else<CR>
+                        \     set nonu foldcolumn=0<CR>let head_flag=0<CR>
+                        \ endif<CR><CR>
+map <F2>
+                        \ :if (!copen_flag)<CR>
+                        \     copen<CR>let copen_flag=1<CR>
+                        \ else<CR>
+                        \     close<CR>let copen_flag=0<CR>
+                        \ endif<CR><CR>
+map <F3>
+                        \ :if (!nowrap_flag)<CR>
+                        \     set nowrap<CR>let nowrap_flag=1<CR>
+                        \ else<CR>
+                        \     set wrap<CR>let nowrap_flag=0<CR>
+                        \ endif<CR><CR>
+map <F4>
+                        \ :if (!virtual_flag)<CR>
+                        \     set virtualedit=all<CR>let virtual_flag=1<CR>
+                        \ else<CR>
+                        \     set virtualedit=<CR>let virtual_flag=0<CR>
+                        \ endif<CR><CR>
+map <F5>
+                        \ :if (!xxd_flag)<CR>
+                        \     mark x<CR>%!xxd<CR>let xxd_flag=1<CR>
+                        \ else<CR>
+                        \     %!xxd -r<CR>let xxd_flag=0<CR>exe "normal g'x"<CR>
+                        \ endif<CR><CR>
+map <F11>
+                        \ :let tmpencoding=&fileencoding<CR>
+                        \ :if (tmpencoding != "cp936") && (tmpencoding != "utf-8")<CR>
+                        \     exe "set fileencoding="."utf-8"<CR>
+                        \     w<CR>
+                        \ endif<CR>
+                        \ :if (&encoding == "utf-8")<CR>
+                        \     set encoding=cp936<CR>
+                        \     language messages zh_CN<CR>
+                        \     edit %:p<CR>
+                        \ endif<CR>
+                        \ :hardcopy<CR>
+                        \ :if (&encoding == "cp936")<CR>
+                        \     set encoding=utf-8<CR>
+                        \     language messages zh_CN.utf-8<CR>
+                        \     edit %:p<CR>
+                        \ endif<CR>
+                        \ :if (tmpencoding != "cp936") && (tmpencoding != "utf-8")<CR>
+                        \     exe "set fileencoding=".tmpencoding<CR>
+                        \     w<CR>
+                        \ endif<CR>
+map <F12>
+                        \ :echo "
+                        \ <F1> : line head info\n
+                        \ <F2> : copen window\n
+                        \ <F3> : wrap settings\n
+                        \ <F4> : virtual edit\n
+                        \ <F5> : xxd file\n
+                        \ <F6> : \n
+                        \ <F7> : \n
+                        \ <F8> : \n
+                        \ <F9> : \n
+                        \ <F10>: \n
+                        \ <F11>: hardcopy\n
+                        \ <F12>: help message\n
+                        \ "<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Gui settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Enable syntax highlight
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set background=dark
+syntax on
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Set font in gui mode and print mode
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("win32") && has("gui_running")
+        "set guifont=Fixedsys:cGB2312
+        "set guifont=新宋体:h11:cGB2312
+        set guifont=yaheimono:h10:cGB2312
+        "start gvim maximized
+        autocmd GUIEnter * simalt ~x
+elseif has("unix") && has("gui_running")
+        set guifont=Monospace\ 11
+elseif has("mac") && has("gui_running")
+        set guifont=Bitstream\ Vera\ Sans\ Mono:h12
+endif
+
+"set printfont=Fixedsys:cGB2312
+set printfont=新宋体:h11:cGB2312
+"set printfont=yaheimono:h10:cGB2312
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Set windows in gui mode
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("gui_running")
+        set guioptions-=T       "工具栏
+        "set guioptions-=m      "菜单栏
+        "set guioptions-=l      "左滚动条
+        "set guioptions-=L      "垂直分割窗口的左滚动条
+        "set guioptions-=r      "右滚动条
+        "set guioptions-=R      "垂直分割窗口的右滚动条
+        "set guioptions-=b      "水平滚动条
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Set color schema
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+highlight clear
+
+if has("gui_running")
+        "GUI
+        "======================================================================================================================="
+        hi        Cursor         guifg=#000000          guibg=#00FF00           gui=NONE        "光标所在的字符
+        hi        CursorColumn                          guibg=#000000           gui=NONE        "光标所在的屏幕列
+        hi        CursorLine                            guibg=#101010           gui=NONE        "光标所在的屏幕行
+        hi        Directory      guifg=#FF3F3F          guibg=#000000           gui=NONE        "目录名
+        hi        DiffAdd                               guibg=#7F7F00           gui=NONE        "diff: 增加的行
+        hi        DiffChange                            guibg=#7F007F           gui=NONE        "diff: 改变的行
+        hi        DiffDelete                            guibg=#007F7F           gui=NONE        "diff: 删除的行
+        hi        DiffText       guifg=#007F00          guibg=#000000           gui=NONE        "diff: 改变行里的改动文本
+        hi        ErrorMsg       guifg=#FF3F3F          guibg=#000000           gui=NONE        "命令行上的错误信息
+        hi        VertSplit      guifg=#FF3F3F          guibg=#3F3FFF           gui=NONE        "分离垂直分割窗口的列
+        hi        Folded         guifg=#7FFF00          guibg=#7F7F00           gui=NONE        "用于关闭的折叠的行
+        hi        IncSearch      guifg=#FFFF00          guibg=#0000FF           gui=NONE        "'incsearch' 高亮
+        hi        LineNr         guifg=#FFFF00          guibg=#000000           gui=NONE        "置位 number 选项时的行号
+        hi        MatchParen     guifg=#FF7F3F          guibg=#000000           gui=NONE        "配对的括号
+        hi        MatchParen     guifg=#FFFF00          guibg=#FF0000           gui=NONE        "配对的括号
+        hi        ModeMsg        guifg=#FF7F00          guibg=#000000           gui=NONE        "showmode 消息(INSERT)
+        hi        MoreMsg        guifg=#BFBF3F          guibg=#000000           gui=NONE        "|more-prompt|
+        hi        NonText        guifg=#007FFF          guibg=#000000           gui=NONE        "窗口尾部的'~'和 '@'
+        hi        Normal         guifg=#BFBFBF          guibg=#000000           gui=NONE        "正常内容
+        hi        Pmenu          guifg=#FFFFFF          guibg=#3F3FFF           gui=NONE        "弹出菜单普通项目
+        hi        PmenuSel       guifg=#FFFF00          guibg=#FF3F3F           gui=NONE        "弹出菜单选中项目
+        hi        PmenuSbar      guifg=#3F3FFF          guibg=#000000           gui=NONE        "弹出菜单滚动条。
+        hi        PmenuThumb     guifg=#000000          guibg=#3FFF3F           gui=NONE        "弹出菜单滚动条的拇指
+        hi        Question       guifg=#7F7F7F          guibg=#000000           gui=NONE        "提示和 yes/no 问题
+        hi        Search         guifg=#FFFF00          guibg=#0000FF           gui=NONE        "最近搜索模式的高亮
+        hi        SpecialKey     guifg=#FF7F00          guibg=#000000           gui=NONE        "特殊键，字符和'listchars'
+        hi        SpellBad       guifg=#FF0000          guibg=#000000           gui=NONE        "拼写检查器不能识别的单词
+        hi        SpellCap       guifg=#BF0000          guibg=#000000           gui=NONE        "应该大写字母开头的单词
+        hi        SpellLocal     guifg=#FF00FF          guibg=#000000           gui=NONE        "只在其它区域使用的单词
+        hi        SpellRare      guifg=#FF7FFF          guibg=#000000           gui=NONE        "很少使用的单词
+        hi        StatusLine     guifg=#FFFF00          guibg=#0000FF           gui=NONE        "当前窗口的状态行
+        hi        StatusLineNC   guifg=#FFFFFF          guibg=#3F3F3F           gui=NONE        "非当前窗口的状态行
+        hi        TabLine        guifg=#000000          guibg=#BFBFBF           gui=NONE        "非活动标签页标签
+        hi        TabLineFill    guifg=#000000          guibg=#FFFFFF           gui=NONE        "没有标签的地方
+        hi        TabLineSel     guifg=#FFFF00          guibg=#0000FF           gui=NONE        "活动标签页标签
+        hi        Title          guifg=#007FBF          guibg=#000000           gui=NONE        ":set all 等输出的标题
+        hi        Visual         guifg=#FFFF00          guibg=#0000FF           gui=NONE        "可视模式的选择区
+        hi        WarningMsg     guifg=#FF003F          guibg=#000000           gui=NONE        "警告消息
+        hi        WildMenu       guifg=#FF7F00          guibg=#0000FF           gui=NONE        "wildmenu补全的当前匹配
+        "======================================================================================================================="
+        "GUI group-name
+        "======================================================================================================================="
+        hi        Comment        guifg=#7F7FFF          guibg=#000000           gui=NONE        "任何注释
+        "-----------------------------------------------------------------------------------------------------------------------"
+        hi        Constant       guifg=#BF007F          guibg=#000000           gui=NONE        "任何常数
+        hi        String         guifg=#FF7F7F          guibg=#000000           gui=NONE        "一个字符串常数: "字符串"
+        hi        Character      guifg=#FF3F3F          guibg=#000000           gui=NONE        "一个字符常数: 'c'、'\n'
+        hi        Number         guifg=#FF7F3F          guibg=#000000           gui=NONE        "一个数字常数: 234、0xff
+        hi        Float          guifg=#FF7F3F          guibg=#000000           gui=NONE        "一个浮点常数: 2.3e10
+        hi        Boolean        guifg=#FF0000          guibg=#000000           gui=NONE        "一个布尔型常数: TRUE、false
+        "-----------------------------------------------------------------------------------------------------------------------"
+        hi        Identifier     guifg=#007FBF          guibg=#000000           gui=NONE        "任何变量名
+        hi        Function       guifg=#00BFBF          guibg=#000000           gui=NONE        "函数名 (也包括: 类的方法名)
+        "-----------------------------------------------------------------------------------------------------------------------"
+        hi        Statement      guifg=#FFFF7F          guibg=#000000           gui=NONE        "任何语句
+        hi        Conditional    guifg=#FFFF00          guibg=#000000           gui=NONE        "if、then、else、endif、switch
+        hi        Repeat         guifg=#FFBF00          guibg=#000000           gui=NONE        "for、do、while 等
+        hi        Label          guifg=#FF7F00          guibg=#000000           gui=NONE        "case、default 等
+        hi        Operator       guifg=#BFFF00          guibg=#000000           gui=NONE        ""sizeof"、"+"、"*" 等
+        hi        Keyword        guifg=#BFBF00          guibg=#000000           gui=NONE        "任何其它关键字
+        hi        Exception      guifg=#BF7F00          guibg=#000000           gui=NONE        "try、catch、throw
+        "-----------------------------------------------------------------------------------------------------------------------"
+        hi        PreProc        guifg=#FF63FF          guibg=#000000           gui=NONE        "通用预处理命令
+        hi        Include        guifg=#FF00FF          guibg=#000000           gui=NONE        "预处理命令 #include
+        hi        Define         guifg=#BF3FBF          guibg=#000000           gui=NONE        "预处理命令 #define
+        hi        Macro          guifg=#7F00BF          guibg=#000000           gui=NONE        "等同于 Define
+        hi        PreCondit      guifg=#FF007F          guibg=#000000           gui=NONE        "预处理命令 #if、#else、#endif
+        "-----------------------------------------------------------------------------------------------------------------------"
+        hi        Type           guifg=#00FF00          guibg=#000000           gui=NONE        "int、long、char 等
+        hi        StorageClass   guifg=#7FFF00          guibg=#000000           gui=NONE        "static、register、volatile 等
+        hi        Structure      guifg=#00FF7F          guibg=#000000           gui=NONE        "struct、union、enum 等
+        hi        Typedef        guifg=#3FFF3F          guibg=#000000           gui=NONE        "一个 typedef
+        "-----------------------------------------------------------------------------------------------------------------------"
+        hi        Special        guifg=#BFBF3F          guibg=#000000           gui=NONE        "任何特殊符号
+        hi        SpecialChar    guifg=#FFBF3F          guibg=#000000           gui=NONE        "常数中的特殊字符
+        hi        Tag            guifg=#BFFF3F          guibg=#000000           gui=NONE        "这里可以使用 CTRL-]
+        hi        Delimiter      guifg=#FF3F00          guibg=#000000           gui=NONE        "需要注意的字符
+        hi        SpecialComment guifg=#FF00BF          guibg=#000000           gui=NONE        "注释里的特殊字符
+        hi        Debug          guifg=#BF00FF          guibg=#000000           gui=NONE        "调试语句
+        "-----------------------------------------------------------------------------------------------------------------------"
+        hi        Underlined     guifg=#3F3FFF          guibg=#000000           gui=UNDERLINE   "需要突出的文本，HTML 链接
+        hi        Ignore         guifg=#7F7F7F          guibg=#000000           gui=NONE        "留空，被隐藏
+        hi        Error          guifg=#FFFF00          guibg=#FF0000           gui=NONE        "任何有错的构造
+        hi        Todo           guifg=#FFFFFF          guibg=#0000FF           gui=NONE        "任何需要特殊注意的部分
+        "======================================================================================================================="
+else
+        "Console
+        "======================================================================================================================="
+        hi        Cursor         ctermfg=black            ctermbg=lightgreen        cterm=BOLD        "光标所在的字符
+        hi        CursorColumn                            ctermbg=black             cterm=BOLD        "光标所在的屏幕列
+        hi        CursorLine                              ctermbg=black             cterm=BOLD        "光标所在的屏幕行
+        hi        Directory      ctermfg=lightmagenta     ctermbg=black             cterm=BOLD        "目录名
+        hi        DiffAdd                                 ctermbg=lightgreen        cterm=BOLD        "diff: 增加的行
+        hi        DiffChange                              ctermbg=lightcyan         cterm=BOLD        "diff: 改变的行
+        hi        DiffDelete                              ctermbg=lightcyan         cterm=BOLD        "diff: 删除的行
+        hi        DiffText       ctermfg=lightgreen       ctermbg=black             cterm=BOLD        "diff: 改变行里的改动文本
+        hi        ErrorMsg       ctermfg=lightmagenta     ctermbg=black             cterm=BOLD        "命令行上的错误信息
+        hi        VertSplit      ctermfg=lightmagenta     ctermbg=lightblue         cterm=BOLD        "分离垂直分割窗口的列
+        hi        Folded         ctermfg=lightgrey        ctermbg=lightgreen        cterm=BOLD        "用于关闭的折叠的行
+        hi        IncSearch      ctermfg=yellow           ctermbg=lightblue         cterm=BOLD        "'incsearch' 高亮
+        hi        LineNr         ctermfg=yellow           ctermbg=black             cterm=BOLD        "置位 number 选项时的行号
+        hi        MatchParen     ctermfg=lightred         ctermbg=black             cterm=BOLD        "配对的括号
+        hi        MatchParen     ctermfg=yellow           ctermbg=lightred          cterm=BOLD        "配对的括号
+        hi        ModeMsg        ctermfg=lightgreen       ctermbg=black             cterm=BOLD        "showmode 消息(INSERT)
+        hi        MoreMsg        ctermfg=lightcyan        ctermbg=black             cterm=BOLD        "|more-prompt|
+        hi        NonText        ctermfg=lightcyan        ctermbg=black             cterm=BOLD        "窗口尾部的'~'和 '@'
+        hi        Normal         ctermfg=lightgrey        ctermbg=black             cterm=BOLD        "正常内容
+        hi        Pmenu          ctermfg=lightgrey        ctermbg=lightblue         cterm=BOLD        "弹出菜单普通项目
+        hi        PmenuSel       ctermfg=yellow           ctermbg=lightmagenta      cterm=BOLD        "弹出菜单选中项目
+        hi        PmenuSbar      ctermfg=lightcyan        ctermbg=black             cterm=BOLD        "弹出菜单滚动条。
+        hi        PmenuThumb     ctermfg=black            ctermbg=lightgreen        cterm=BOLD        "弹出菜单滚动条的拇指
+        hi        Question       ctermfg=yellow           ctermbg=black             cterm=BOLD        "提示和 yes/no 问题
+        hi        Search         ctermfg=yellow           ctermbg=lightblue         cterm=BOLD        "最近搜索模式的高亮
+        hi        SpecialKey     ctermfg=lightgreen       ctermbg=black             cterm=BOLD        "特殊键，字符和'listchars'
+        hi        SpellBad       ctermfg=lightred         ctermbg=black             cterm=BOLD        "拼写检查器不能识别的单词
+        hi        SpellCap       ctermfg=lightred         ctermbg=black             cterm=BOLD        "应该大写字母开头的单词
+        hi        SpellLocal     ctermfg=lightcyan        ctermbg=black             cterm=BOLD        "只在其它区域使用的单词
+        hi        SpellRare      ctermfg=lightcyan        ctermbg=black             cterm=BOLD        "很少使用的单词
+        hi        StatusLine     ctermfg=yellow           ctermbg=lightblue         cterm=BOLD        "当前窗口的状态行
+        hi        StatusLineNC   ctermfg=yellow           ctermbg=black             cterm=BOLD        "非当前窗口的状态行
+        hi        TabLine        ctermfg=black            ctermbg=black             cterm=BOLD        "非活动标签页标签
+        hi        TabLineFill    ctermfg=black            ctermbg=lightgrey         cterm=BOLD        "没有标签的地方
+        hi        TabLineSel     ctermfg=yellow           ctermbg=lightblue         cterm=BOLD        "活动标签页标签
+        hi        Title          ctermfg=lightmagenta     ctermbg=black             cterm=BOLD        ":set all 等输出的标题
+        hi        Visual         ctermfg=yellow           ctermbg=lightblue         cterm=BOLD        "可视模式的选择区
+        hi        WarningMsg     ctermfg=lightmagenta     ctermbg=black             cterm=BOLD        "警告消息
+        hi        WildMenu       ctermfg=lightgreen       ctermbg=lightblue         cterm=BOLD        "wildmenu补全的当前匹配
+        "======================================================================================================================="
+        "Console group-name
+        "======================================================================================================================="
+        hi        Comment        ctermfg=yellow           ctermbg=black             cterm=BOLD        "任何注释
+        "-----------------------------------------------------------------------------------------------------------------------"
+        hi        Constant       ctermfg=brown            ctermbg=black             cterm=BOLD        "任何常数
+        hi        String         ctermfg=lightmagenta     ctermbg=black             cterm=BOLD        "一个字符串常数: "字符串"
+        hi        Character      ctermfg=lightmagenta     ctermbg=black             cterm=BOLD        "一个字符常数: 'c'、'\n'
+        hi        Number         ctermfg=lightgreen       ctermbg=black             cterm=BOLD        "一个数字常数: 234、0xff
+        hi        Float          ctermfg=lightgreen       ctermbg=black             cterm=BOLD        "一个浮点常数: 2.3e10
+        hi        Boolean        ctermfg=lightmagenta     ctermbg=black             cterm=BOLD        "一个布尔型常数: TRUE、false
+        "-----------------------------------------------------------------------------------------------------------------------"
+        hi        Identifier     ctermfg=lightcyan        ctermbg=black             cterm=BOLD        "任何变量名
+        hi        Function       ctermfg=lightcyan        ctermbg=black             cterm=BOLD        "函数名 (也包括: 类的方法名)
+        "-----------------------------------------------------------------------------------------------------------------------"
+        hi        Statement      ctermfg=yellow           ctermbg=black             cterm=BOLD        "任何语句
+        hi        Conditional    ctermfg=yellow           ctermbg=black             cterm=BOLD        "if、then、else、endif、switch
+        hi        Repeat         ctermfg=yellow           ctermbg=black             cterm=BOLD        "for、do、while 等
+        hi        Label          ctermfg=yellow           ctermbg=black             cterm=BOLD        "case、default 等
+        hi        Operator       ctermfg=yellow           ctermbg=black             cterm=BOLD        ""sizeof"、"+"、"*" 等
+        hi        Keyword        ctermfg=yellow           ctermbg=black             cterm=BOLD        "任何其它关键字
+        hi        Exception      ctermfg=lightred         ctermbg=black             cterm=BOLD        "try、catch、throw
+        "-----------------------------------------------------------------------------------------------------------------------"
+        hi        PreProc        ctermfg=lightmagenta     ctermbg=black             cterm=BOLD        "通用预处理命令
+        hi        Include        ctermfg=lightmagenta     ctermbg=black             cterm=BOLD        "预处理命令 #include
+        hi        Define         ctermfg=lightmagenta     ctermbg=black             cterm=BOLD        "预处理命令 #define
+        hi        Macro          ctermfg=lightmagenta     ctermbg=black             cterm=BOLD        "等同于 Define
+        hi        PreCondit      ctermfg=lightred         ctermbg=black             cterm=BOLD        "预处理命令 #if、#else、#endif
+        "-----------------------------------------------------------------------------------------------------------------------"
+        hi        Type           ctermfg=lightgreen       ctermbg=black             cterm=BOLD        "int、long、char 等
+        hi        StorageClass   ctermfg=lightmagenta     ctermbg=black             cterm=BOLD        "static、register、volatile 等
+        hi        Structure      ctermfg=lightgreen       ctermbg=black             cterm=BOLD        "struct、union、enum 等
+        hi        Typedef        ctermfg=lightcyan        ctermbg=black             cterm=BOLD        "一个 typedef
+        "-----------------------------------------------------------------------------------------------------------------------"
+        hi        Special        ctermfg=brown            ctermbg=black             cterm=BOLD        "任何特殊符号
+        hi        SpecialChar    ctermfg=brown            ctermbg=black             cterm=BOLD        "常数中的特殊字符
+        hi        Tag            ctermfg=lightcyan        ctermbg=black             cterm=BOLD        "这里可以使用 CTRL-]
+        hi        Delimiter      ctermfg=lightgreen       ctermbg=black             cterm=BOLD        "需要注意的字符
+        hi        SpecialComment ctermfg=lightred         ctermbg=black             cterm=BOLD        "注释里的特殊字符
+        hi        Debug          ctermfg=lightcyan        ctermbg=black             cterm=BOLD        "调试语句
+        "-----------------------------------------------------------------------------------------------------------------------"
+        hi        Underlined     ctermfg=lightcyan        ctermbg=black             cterm=BOLD        "需要突出的文本，HTML 链接
+        hi        Ignore         ctermfg=darkgrey         ctermbg=black             cterm=NONE        "留空，被隐藏
+        hi        Error          ctermfg=yellow           ctermbg=lightred          cterm=BOLD        "任何有错的构造
+        hi        Todo           ctermfg=lightgrey        ctermbg=lightblue         cterm=BOLD        "任何需要特殊注意的部分
+        "======================================================================================================================="
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Hightlight current line or column
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("gui_running")
+        set cursorline
+        "set cursorcolumn
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Omni menu colors
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("gui_running")
+        set completeopt=menu
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Display mode
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set display+=uhex
+set display+=lastline
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Menu hot key mode
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("gui_running")
+        "set winaltkeys=no
+        set winaltkeys=menu
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Fileformats
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Define filetypes on different OS
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("win32")
+        set fileformats=dos,unix
+elseif has("unix")
+        set fileformats=unix,dos
+elseif has("mac")
+        set fileformats=mac,dos,unix
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => VIM userinterface
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Set 7 lines to the curors - when moving vertical..
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set so=7
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Show command
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set showcmd
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Turn on WiLd menu
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set wildmenu
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Set ruler format string
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set ruler
+hi  User1  guifg=#FF0000  guibg=#0000FF  gui=NONE  ctermfg=yellow  ctermbg=lightblue  cterm=BOLD
+set rulerformat=%64(%3(%1*%m%*%)%4(%1*%r%*%)%4([%n]%)%8([%Y]%)%8([0x%B]%)%15([%l/%L]%)%11([%c%V]%)%6([%P]%)%)
+"like               [-]         [RO]        [1]      [HELP]   [0x20]     [1/100]      [1-8]       [顶端]
+
+"    f    缓冲区的文件路径，保持输入的形式或相对于当前目录。
+"    t    缓冲区的文件的文件名 (尾部)。
+"    m    修改标志位，文本是 " [+]"；若 'modifiable' 关闭则是 " [-]"。
+"    r    只读标志位，文本是 " [RO]"。
+"    h    帮助缓冲区标志位，文本是 " [help]"。
+"    w    预览窗口标志位，文本是 " [Preview]"。
+"    y    缓冲区的文件类型，如 " [vim]"。见 'filetype'。
+"         {仅当编译时加入 |+autocmd| 特性才有效}
+"    n    缓冲区号。
+"    b    光标所在字节的值。
+"    o    光标所在字节在文件中的字节偏移，第一个字节为 1。
+"    N    打印机页号。(只用于 'printheader' 选项。)
+"    l    行号。
+"    L    缓冲区里的行数。
+"    c    列号。
+"    v    虚拟列号。
+"    V    虚拟列号，表示为 -{num}。如果等于 'c' 的值，不显示。
+"    p    行数计算在文件位置的百分比，如同 |CTRL-G| 给出的那样。
+"    P    显示窗口在文件位置的百分比，类似于 'ruler' 描述的百分比。长度总是为 3。
+"    a    参数列表状态，就像缺省标题里的那样。({current} of {max})
+"    {    计算 '%{' 和 '}' 之间的表达式，并返回其结果替代。注意 结束的 '}'之前没有 '%'。
+"    (    项目组的开始。可以用来为某组项目设置宽度和对齐。后面某处必须有%)。
+"    )    项目组的结束。不能指定宽度域。
+"    <    如果行过长，在什么地方截短。缺省是在开头。不能指定宽度域。
+"    =    左对齐和右对齐项目之间的分割点。不能指定宽度域。
+"    *    设置高亮组为 User{N}，其中的 {N} 取自 minwid 域，比如 %1*。用 %*
+"         或者 %*0 可以恢复 normal 高亮。User{N} 和 StatusLine 的区别也会
+"         应用到非当前窗口的状态行使用的 StatusLineNC 上。
+"         数字 N 必须从 1 到 9。见 |hl-User1..9|
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Set the commandbar height
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set cmdheight=1
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Show line number
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set number
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Do not redraw, when running macros.. lazyredraw
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set lazyredraw
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Change buffer - without saving
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set hidden
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Set backspace
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set backspace=eol,start,indent
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Backspace and cursor keys wrap to other line
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"set whichwrap+=<,>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Ignore case when searching
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"set ignorecase
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Increase search mode
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set incsearch
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Report when anything is changed
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set report=0
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Set magic on
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set magic
+"      magic   nomagic  匹配 ~
+"|/\s|  \s      \s      空白字符； <Space> 和 <Tab>
+"|/\S|  \S      \S      非空白字符：\s 之反
+"|/\d|  \d      \d      数位:                 [0-9]
+"|/\D|  \D      \D      非数位:                      [^0-9]
+"|/\x|  \x      \x      十六进制数位:             [0-9A-Fa-f]
+"|/\X|  \X      \X      非十六进制数位:          [^0-9A-Fa-f]
+"|/\o|  \o      \o      八进制数位:                [0-7]
+"|/\O|  \O      \O      非八进制数位:             [^0-7]
+"|/\w|  \w      \w      单词字符:           [0-9A-Za-z_]
+"|/\W|  \W      \W      非单词字符:                [^0-9A-Za-z_]
+"|/\h|  \h      \h      单词首字符:                [A-Za-z_]
+"|/\H|  \H      \H      单词非首字符:             [^A-Za-z_]
+"|/\a|  \a      \a      英文字母字符:             [A-Za-z]
+"|/\A|  \A      \A      非英文字母字符:          [^A-Za-z]
+"|/\l|  \l      \l      小写字符:           [a-z]
+"|/\L|  \L      \L      非小写字符:                [^a-z]
+"|/\u|  \u      \u      大写字符:           [A-Z]
+"|/\U|  \U      \U      非大写字符         [^A-Z]
+"|/\_|  \_x     \_x     其中 x 可以是以上任意一个字符：对应字符类加上换行
+"
+"|/\e|  \e      \e      <Esc>
+"|/\t|  \t      \t      <Tab>
+"|/\r|  \r      \r      <CR>
+"|/\b|  \b      \b      <BS>
+"|/\n|  \n      \n      行尾符
+"|/~|   ~       \~      上次给出的替代字符串
+"
+"|/\%d| \%d     \%d     匹配用十进制指定的字符 (如 \%d123)
+"|/\%x| \%x     \%x     匹配用十六进制指定的字符 (如 \%x2a)
+"|/\%o| \%o     \%o     匹配用八进制指定的字符 (如 \%o040)
+"|/\%u| \%u     \%u     匹配指定的多字节字符 (如 \%u20ac)
+"|/\%U| \%U     \%U     匹配指定的巨大多字节字符 (如 \%U12345678)
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => No sound on errors.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set noerrorbells
+set novisualbell
+set t_vb=
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Show matching brackets
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set showmatch
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => How many tenths of a second to blink pairs
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set matchtime=5
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Highlight search things
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set hlsearch
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Always hide the statusline
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set laststatus=2
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Format the statusline
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+hi  User1  guifg=#FF0000  guibg=#0000FF  gui=NONE  ctermfg=yellow  ctermbg=lightblue  cterm=BOLD  "当前窗口的状态行
+if has("win32")
+        set statusline=%<[%{getcwd()}\\%t][%{&ff}][%{&fenc}]%=
+        "like            [C:\boot.ini]    [dos]   [utf-8]
+        set statusline+=%64(%3(%1*%m%*%)%4(%1*%r%*%)%4([%n]%)%8([%Y]%)%8([0x%B]%)%15([%l/%L]%)%11([%c%V]%)%6([%P]%)%)
+        "like               [-]         [RO]        [1]      [HELP]   [0x20]     [1/100]      [1-8]       [顶端]
+else
+        set statusline=%<[%{getcwd()}\/%t][%{&ff}][%{&fenc}]%=
+        "like            [/etc/passwd]    [unix]  [cp936]
+        set statusline+=%64(%3(%1*%m%*%)%4(%1*%r%*%)%4([%n]%)%8([%Y]%)%8([0x%B]%)%15([%l/%L]%)%11([%c%V]%)%6([%P]%)%)
+        "like               [-]         [RO]        [1]      [HELP]   [0x20]     [1/100]      [1-8]       [顶端]
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Map space to /
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"map <space> /
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Smart way to move btw. windows
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"map <C-j> <C-W>j
+"map <C-k> <C-W>k
+"map <C-h> <C-W>h
+"map <C-l> <C-W>l
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Use the arrows to something usefull
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"map <up>    :echo<CR>
+"map <down>  :echo<CR>
+"map <left>  :echo<CR>
+"map <right> :echo<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Tab Options
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Show tabline and set tab label format
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("gui_running")
+        set showtabline=2
+        set guitablabel=[%N]\ %t\ %m
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"tab quick key
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("gui_running")
+        map <right> :tabnew<CR>
+        map <left> :bdelete<CR>
+        map <A-1> 1gt
+        map <A-2> 2gt
+        map <A-3> 3gt
+        map <A-4> 4gt
+        map <A-5> 5gt
+        map <A-6> 6gt
+        map <A-7> 7gt
+        map <A-8> 8gt
+        map <A-9> 9gt
+        map <A-0> 10gt
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Tab configuration
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"map <leader>tn :tabnew %<CR>
+"map <leader>te :tabedit
+"map <leader>tc :tabclose<CR>
+"map <leader>tm :tabmove
+"if has("usetab")
+"       set switchbuf=usetab
+"endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Moving fast to front, back and 2 sides ;)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"imap <m-$> <esc>$a
+"imap <m-0> <esc>0i
+"imap <D-$> <esc>$a
+"imap <D-0> <esc>0i
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Auto commands
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd BufEnter * :lcd %:p:h
+"autocmd BufEnter * :syntax sync fromstart
+"autocmd BufWritePost * filetype detect
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Leader commands
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Set mapleader, default is '\'
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"let mapleader = "."
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Fast make
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <leader>mak :make -f *.mak<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Fast editing of .vimrc
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <leader>rc :e $VIMRC<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Switch to current dir
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <leader>cd :lcd %:p:h<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Source .vimrc
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <leader>so :source $VIMRC<CR>:e<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Desktop
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <leader>dt :lcd $DESKTOP<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Tmp file
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <leader>tmp :lcd $DESKTOP<CR>:e tmp.txt<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Explorer the current dir
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <leader>ex :!explorer %:p:h<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Command current dir
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <leader>cmd :lcd %:p:h<CR>:!cmd<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Execute current file
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <leader>exe :!"%:p"<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Execute current file
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <leader>sh :!"%:p"<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Notepad current file
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <leader>np :!notepad %:p<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Ultraedit current file
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <leader>ue :!ultraedit %:p<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Utility regular expression
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"%s/\(\[[^]]*$\)\n\(^[^[]*]$\)/\1\2/g
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => General Abbrevs
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => My information
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+iab xdate <c-r>=strftime("%Y/%m/%d")<CR>
+iab xtime <c-r>=strftime("%H:%M:%S")<CR>
+iab xname <c-r> Mao Zhiyuan<CR>
+iab xmail <c-r> mzy1491@hotmail.com<CR>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Editing mappings etc.
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Move (also can Copy) some text using control
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"nmap <A-j> mz:move+1<CR>`z
+"nmap <A-k> mz:move-2<CR>`z
+"vmap <A-j> :move'>+1<CR>gv
+"vmap <A-k> :move'<-2<CR>gv
+
+"nmap <A-h> xhP
+"nmap <A-l> xp
+"vmap <A-h> xhPma`>mb`a<C-V>`bh
+"vmap <A-l> xpma`>mb`a<C-V>`bl
+
+"if has("mac")
+"       nmap <D-j> <A-j>
+"       nmap <D-k> <A-k>
+"       vmap <D-j> <A-j>
+"       vmap <D-k> <A-k>
+"       nmap <D-h> <A-h>
+"       nmap <D-l> <A-l>
+"       vmap <D-h> <A-h>
+"       vmap <D-l> <A-l>
+"endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Command-line config
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Smart mappings on the command line
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"cnoremap desktop cd $DESKTOP
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Bash like
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"cnoremap <C-A> <Home>
+"cnoremap <C-E> <End>
+"cnoremap <C-K> <C-U>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Buffer realted
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Fast open a buffer by search for a name
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"map <c-q> :sbuffer
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Buffer - reverse everything ... :)
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"map <key> ggVGg?
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Files and backups
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Set backup and temp directory
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+if has("win32")
+        "set nobackup
+        "set nowritebackup
+        "set noswapfile
+        set directory=$TMP
+        set backupdir=$TMP
+elseif has("unix")
+        set nobackup
+        set nowritebackup
+        set noswapfile
+        set directory=/tmp
+        set backupdir=/tmp
+endif
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Folding
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Enable folding, I find it very useful
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set foldmethod=syntax
+"|fold-manual|  manual      手动建立折叠。
+"|fold-indent|  indent      相同缩进距离的行构成折叠。
+"|fold-expr|    expr        'foldexpr' 给出每行的折叠级别。
+"|fold-marker|  marker      标志用于指定折叠。
+"|fold-syntax|  syntax      语法高亮项目指定折叠。
+"|fold-diff|    diff        没有改变的文本构成折叠。
+set foldenable
+set foldcolumn=0
+hi  FoldColumn  guifg=#00FF00  guibg=#000000  gui=NONE  ctermfg=green  ctermbg=black  cterm=BOLD  "当前窗口的状态行
+set foldlevel=100
+set foldmarker={{{,}}}
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Text options
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"set expandtab
+set shiftwidth=4
+"set softtabstop=2
+set tabstop=4
+"set backspace=2
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => List options
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"set list
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set listchars=tab:>-,trail:-,precedes:<,extends:>
+"  eol:c        行尾显示的字符。如果忽略，行尾没有额外的字符。
+"  tab:xy       用于显示制表的两个字符。使用第一个字符一次。然后重复第二个字符来填充制表通常填充的位置。
+"  trail:c      拖尾空白显示的字符。如果忽略，拖尾空白显示为空格。
+"  extends:c    如果 'wrap' 关闭，而行在屏幕右边界之后还要继续时，最后一列显示的字符。
+"  precedes:c   如果 'wrap' 关闭，而行在可视范围第一列之前还有内容时，第一列显示的字符。
+"  nbsp:c       显示不可间断空格的字符 (字符 0xA0，160)。如果忽略，留出一个空格。
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Text format settings
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set smarttab
+set textwidth=0
+set nolinebreak
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Auto indent
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set autoindent
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Smart indet
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set smartindent
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => C-style indenting
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set cindent
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Wrap lines
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+set wrap
+set nostartofline
+set sidescroll=1
+set sidescrolloff=30
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Spell checking
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"map <leader>sn ]s
+"map <leader>sp [s
+"map <leader>sa zg
+"map <leader>s? z=
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Filetype generic
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+autocmd FileType,BufRead,BufWrite *.sap,*.DEF          setf vb
+autocmd FileType,BufRead,BufWrite *.log,*.LOG          setf awk
+autocmd FileType,BufRead,BufWrite *.ec,*.EC            setf esqlc
+autocmd FileType,BufRead,BufWrite *.pc,*.PC            setf esqlc
+autocmd FileType,BufRead,BufWrite *.xc,*.XC            setf esqlc
+autocmd FileType,BufRead,BufWrite *.sqc,*.SQC          setf esqlc
+autocmd FileType,BufRead,BufWrite *.sah                setf c
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => HTML entities - used by xml edit plugin
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+let xml_use_xhtml = 1
+"let xml_no_auto_nesting = 1
